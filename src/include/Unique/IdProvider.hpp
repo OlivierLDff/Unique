@@ -46,6 +46,7 @@ private:
     T _idCounter = min;
     /** Available ids before idCounter */
     std::set<T> _availableIds;
+    size_t _takenIdCounter = 0;
 
 private:
     /** Recursively erase available ids in the available list. Recursion happen inside a while loop to avoid stack overflow */
@@ -73,6 +74,13 @@ public:
     T getFirstIdAvailable() const;
 
     /**
+     * \brief Get the next id available. So either calling getFirstIdAvailable if there is some _availableIds
+     * Otherwise return the valid of idCounter.
+     * This function doesn't increment the idCounter or take any id.
+     */
+    T getNextId() const;
+
+    /**
      * \brief Release an id to make it available to takeNextId again.
      * The function assert if id isn't bound correctly or if value already have been released
      * This behavior help to track bugs or misbehavior during dev
@@ -88,6 +96,13 @@ public:
     bool isIdAvailable(const T id) const;
 
     /**
+     * \brief Get if an id is taken
+     * \param id Value between _minId included and _maxId excluded. The function will assert otherwise
+     * \return true if the value isn't present in _availableId and the value is inferior to idCounter
+     */
+    bool isIdTaken(const T id) const;
+
+    /**
      * \brief Count of available id before _idCounter
      * \return Size of _availableIds. This function is mainly tests
      */
@@ -98,6 +113,9 @@ public:
      * \return True if there are no available ids
      */
     bool availableIdsEmpty() const;
+
+    /** Get the count of taken ids */
+    size_t countOfTakenIds() const;
 
     /**
      * \brief Clear the counter and reset everything to initialization
@@ -150,6 +168,10 @@ bool IdProvider<T, min, max>::takeId(const T id)
     {
         // ) We simply increment it for next takeNextId to work
         ++_idCounter;
+
+        // ) Keep track of every id taken
+        ++_takenIdCounter;
+
         return true;
     }
 
@@ -163,6 +185,10 @@ bool IdProvider<T, min, max>::takeId(const T id)
             _availableIds.insert(_availableIds.end(), i);
         }
         _idCounter = id + 1;
+
+        // ) Keep track of every id taken
+        ++_takenIdCounter;
+
         return true;
     }
 
@@ -173,6 +199,9 @@ bool IdProvider<T, min, max>::takeId(const T id)
         return false;
 
     eraseAvailableId(it);
+
+    // ) Keep track of every id taken
+    ++_takenIdCounter;
     return true;
 }
 
@@ -184,6 +213,10 @@ T IdProvider<T, min, max>::takeNextId()
     {
         // ) We can't have idCounter >= the maxId. Because it mean we reached maximum memory available, we need to assert
         assert(_idCounter < MAX);
+
+        // ) Keep track of every id taken
+        ++_takenIdCounter;
+
         return _idCounter++;
     }
 
@@ -191,6 +224,9 @@ T IdProvider<T, min, max>::takeNextId()
     const auto it = _availableIds.begin();
     const auto id = *it;
     _availableIds.erase(it);
+
+    // ) Keep track of every id taken
+    ++_takenIdCounter;
     return id;
 }
 
@@ -198,6 +234,13 @@ template <typename T, T min, T max>
 T IdProvider<T, min, max>::getFirstIdAvailable() const
 {
     return countOfAvailableIds() ? *_availableIds.begin() : 0;
+}
+
+template <typename T, T min, T max>
+T IdProvider<T, min, max>::getNextId() const
+{
+    const auto firstAvailableId = getFirstIdAvailable();
+    return firstAvailableId ? firstAvailableId : _idCounter;
 }
 
 template <typename T, T min, T max>
@@ -233,6 +276,9 @@ void IdProvider<T, min, max>::releaseId(const T id)
         // ) Simply push back the available id in the set
         _availableIds.insert(id);
     }
+
+    assert(_takenIdCounter > 0);
+    --_takenIdCounter;
 }
 
 template <typename T, T min, T max>
@@ -241,7 +287,13 @@ bool IdProvider<T, min, max>::isIdAvailable(const T id) const
     // ) Always assert the id to find bugs asap in debug
     assert_id(id);
 
-    return id>=_idCounter || _availableIds.find(id) != _availableIds.end();
+    return id >= _idCounter || _availableIds.find(id) != _availableIds.end();
+}
+
+template <typename T, T min, T max>
+bool IdProvider<T, min, max>::isIdTaken(const T id) const
+{
+    return !isIdAvailable(id);
 }
 
 template <typename T, T min, T max>
@@ -257,11 +309,18 @@ bool IdProvider<T, min, max>::availableIdsEmpty() const
 }
 
 template <typename T, T min, T max>
+size_t IdProvider<T, min, max>::countOfTakenIds() const
+{
+    return _takenIdCounter;
+}
+
+template <typename T, T min, T max>
 void IdProvider<T, min, max>::clear()
 {
     // ) Clear the idCounter and the available id array
     _idCounter = MIN;
     _availableIds.clear();
+    _takenIdCounter = 0;
 }
 
 UNIQUE_NAMESPACE_END
