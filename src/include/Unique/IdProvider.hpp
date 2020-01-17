@@ -114,6 +114,8 @@ public:
      */
     bool availableIdsEmpty() const;
 
+    bool areIdsAvailables() const;
+
     /** Get the count of taken ids */
     size_t countOfTakenIds() const;
 
@@ -306,6 +308,12 @@ template <typename T, T min, T max>
 bool IdProvider<T, min, max>::availableIdsEmpty() const
 {
     return  _availableIds.empty();
+}
+
+template <typename T, T min, T max>
+bool IdProvider<T, min, max>::areIdsAvailables() const
+{
+    return !availableIdsEmpty() || (_idCounter < MAX);
 }
 
 template <typename T, T min, T max>
