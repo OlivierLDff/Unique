@@ -114,6 +114,10 @@ public:
      */
     bool availableIdsEmpty() const;
 
+    /**
+     * \brief Get if takeNextId can be safely called without reaching MAX id
+     * \return True takeNextId can be called
+     */
     bool areIdsAvailables() const;
 
     /** Get the count of taken ids */
