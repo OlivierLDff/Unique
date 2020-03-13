@@ -1,5 +1,5 @@
-#ifndef __UNIQUE_MAP_HPP__
-#define __UNIQUE_MAP_HPP__
+#ifndef __UNIQUE_UNORDERED_MAP_HPP__
+#define __UNIQUE_UNORDERED_MAP_HPP__
 
 // ─────────────────────────────────────────────────────────────
 //                  INCLUDE

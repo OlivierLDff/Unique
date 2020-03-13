@@ -5,7 +5,8 @@
 //                  INCLUDE
 // ─────────────────────────────────────────────────────────────
 
-#include <cstddef>
+#include <cstddef> // std::size_t
+#include <utility> // std::pair
 
 // ─────────────────────────────────────────────────────────────
 //                  DECLARATION
