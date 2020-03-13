@@ -5,5 +5,3 @@
 
 // Unique
 #include <Unique/Map.hpp>
-
-UNIQUE_USING_NAMESPACE;

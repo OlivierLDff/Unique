@@ -5,11 +5,10 @@
 //                  INCLUDE
 // ─────────────────────────────────────────────────────────────
 
-// Private Utils
-#include <Unique/Version.hpp>
-
 // Library code
 #include <Unique/IdProvider.hpp>
+#include <Unique/TMap.hpp>
 #include <Unique/Map.hpp>
+#include <Unique/UnorderedMap.hpp>
 
-#endif // __UNIQUE_HPP__
+#endif

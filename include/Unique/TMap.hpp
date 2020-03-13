@@ -1,59 +1,50 @@
-#ifndef __UNIQUE_MAP_HPP__
-#define __UNIQUE_MAP_HPP__
+#ifndef __UNIQUE_TMAP_HPP__
+#define __UNIQUE_TMAP_HPP__
 
 // ─────────────────────────────────────────────────────────────
 //                  INCLUDE
 // ─────────────────────────────────────────────────────────────
 
-// C Header
-
-// C++ Header
-#include <unordered_map>
-#include <map>
-
-// Dependencies Header
-
-// Application Header
-#include <Unique/Export.hpp>
+#include <cstddef>
 
 // ─────────────────────────────────────────────────────────────
 //                  DECLARATION
 // ─────────────────────────────────────────────────────────────
 
-UNIQUE_NAMESPACE_START
+namespace Unique {
 
 // ─────────────────────────────────────────────────────────────
 //                  CLASS
 // ─────────────────────────────────────────────────────────────
 
 /**
+ * Container that contains two maps for fast lookup with any key to the other
  */
-template <class Key1, class Key2>
-class UNIQUE_API_ Map
+template <template<class, class, class ...> class Map1,
+          template<class, class, class ...> class Map2,
+          typename Key1, typename Key2>
+class TMap
 {
 public:
-    typedef std::map<Key1, Key2> Key1Map;
-    typedef std::unordered_map<Key2, Key1> Key2Map;
+    using Key1Map = Map1<Key1, Key2>;
+    using Key2Map = Map2<Key2, Key1>;
 
-    typedef typename Key1Map::iterator Key1Iterator;
-    typedef typename Key2Map::iterator Key2Iterator;
+    using Key1Iterator = typename Key1Map::iterator;
+    using Key2Iterator = typename Key2Map::iterator;
 
-    typedef typename Key1Map::const_iterator Key1ConstIterator;
-    typedef typename Key2Map::const_iterator Key2ConstIterator;
+    using Key1ConstIterator = typename Key1Map::const_iterator;
+    using Key2ConstIterator = typename Key2Map::const_iterator;
 
-    typedef typename Key1Map::value_type Key1ValueType;
-    typedef typename Key2Map::value_type Key2ValueType;
+    using Key1ValueType = typename Key1Map::value_type;
+    using Key2ValueType = typename Key2Map::value_type;
 
-    typedef typename Key1Map::key_type Key1Type;
-    typedef typename Key2Map::key_type Key2Type;
-
-    typedef typename Key1Map::reverse_iterator Key1ReverseIterator;
-    typedef typename Key1Map::const_reverse_iterator Key1ConstReverseIterator;
+    using Key1Type = typename Key1Map::key_type;
+    using Key2Type = typename Key2Map::key_type;
 public:
-    virtual ~Map() = default;
+    virtual ~TMap() = default;
 private:
-    Key1Map _key1Map;
-    Key2Map _key2Map;
+    Key1Map _key1Map {};
+    Key2Map _key2Map {};
 
 public:
     const Key1Map& key1Map() const { return _key1Map; }
@@ -102,53 +93,6 @@ public:
      * \return Iterator to the element following the last element.
      */
     Key1ConstIterator cend() const noexcept { return _key1Map.cend(); }
-    /**
-     * \brief Returns a reverse iterator to the first element of the reversed container.
-     * It corresponds to the last element of the non-reversed container.
-     * If the container is empty, the returned iterator is equal to rend().
-     * \return Reverse iterator to the first element.
-     */
-    Key1ReverseIterator rbegin() noexcept { return _key1Map.rbegin(); }
-
-    /**
-     * \brief Returns a reverse iterator to the element following the last element of the reversed container.
-     * It corresponds to the element preceding the first element of the non-reversed container.
-     * This element acts as a placeholder, attempting to access it results in undefined behavior.
-     * \return Reverse iterator to the element following the last element.
-     */
-    Key1ReverseIterator rend() noexcept { return _key1Map.rend(); }
-
-    /**
-     * \brief Returns a reverse iterator to the first element of the reversed container.
-     * It corresponds to the last element of the non-reversed container.
-     * If the container is empty, the returned iterator is equal to rend().
-     * \return Reverse iterator to the first element.
-     */
-    Key1ConstReverseIterator rbegin() const noexcept { return _key1Map.crbegin(); }
-
-    /**
-     * \brief Returns a reverse iterator to the element following the last element of the reversed container.
-     * It corresponds to the element preceding the first element of the non-reversed container.
-     * This element acts as a placeholder, attempting to access it results in undefined behavior.
-     * \return Reverse iterator to the element following the last element.
-     */
-    Key1ConstReverseIterator rend() const noexcept { return _key1Map.crend(); }
-
-    /**
-     * \brief Returns a reverse iterator to the first element of the reversed container.
-     * It corresponds to the last element of the non-reversed container.
-     * If the container is empty, the returned iterator is equal to rend().
-     * \return Reverse iterator to the first element.
-     */
-    Key1ConstReverseIterator crbegin() const noexcept { return _key1Map.crbegin(); }
-
-    /**
-     * \brief Returns a reverse iterator to the element following the last element of the reversed container.
-     * It corresponds to the element preceding the first element of the non-reversed container.
-     * This element acts as a placeholder, attempting to access it results in undefined behavior.
-     * \return Reverse iterator to the element following the last element.
-     */
-    Key1ConstReverseIterator crend() const noexcept { return _key1Map.crend(); }
 
 public:
     /**
@@ -243,10 +187,10 @@ public:
     bool empty() const noexcept { return _key1Map.empty(); }
 
     /** \brief  Get the number of element in the container */
-    size_t size() const noexcept { return _key1Map.size(); }
+    std::size_t size() const noexcept { return _key1Map.size(); }
 
     /** \brief returns the maximum possible number of elements */
-    size_t max_size() const noexcept { return _key1Map.max_size(); }
+    std::size_t max_size() const noexcept { return _key1Map.max_size(); }
 
     // ──────── MODIFIERS ──────────
 
@@ -371,7 +315,7 @@ private:
         return keyMap.end();
     }
     template<typename KeyMap, typename KeyOtherMap>
-    size_t T_erase(const typename KeyMap::key_type& key, KeyMap& keyMap, KeyOtherMap& keyOtherMap)
+    std::size_t T_erase(const typename KeyMap::key_type& key, KeyMap& keyMap, KeyOtherMap& keyOtherMap)
     {
         const auto it = keyMap.find(key);
         if(it != keyMap.end())
@@ -395,7 +339,7 @@ public:
      * \param key value of the elements to remove
      * \return Number of elements removed.
      */
-    size_t erase(const Key1Type& key) { return T_erase(key, _key1Map, _key2Map); }
+    std::size_t erase(const Key1Type& key) { return T_erase(key, _key1Map, _key2Map); }
 
 public:
     /**
@@ -410,7 +354,7 @@ public:
      * \param key value of the elements to remove
      * \return Number of elements removed.
      */
-    size_t erase(const Key2Type& key) { return T_erase(key, _key2Map, _key1Map); }
+    std::size_t erase(const Key2Type& key) { return T_erase(key, _key2Map, _key1Map); }
 
 private:
     template<typename Key, typename OtherKey, typename KeyMap, typename KeyOtherMap>
@@ -588,6 +532,6 @@ public:
     bool contains(const Key2& value) const { return find(value) != end2(); }
 };
 
-UNIQUE_NAMESPACE_END
+}
 
-#endif // __UNIQUE_MAP_HPP__
+#endif

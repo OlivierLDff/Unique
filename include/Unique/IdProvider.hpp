@@ -5,29 +5,21 @@
 //                  INCLUDE
 // ─────────────────────────────────────────────────────────────
 
-// C Header
-
-// C++ Header
 #include <cassert>
 #include <set>
-
-// Dependencies Header
-
-// Application Header
-#include <Unique/Export.hpp>
 
 // ─────────────────────────────────────────────────────────────
 //                  DECLARATION
 // ─────────────────────────────────────────────────────────────
 
-UNIQUE_NAMESPACE_START
+namespace Unique {
 
 // ─────────────────────────────────────────────────────────────
 //                  CLASS
 // ─────────────────────────────────────────────────────────────
 
 template <typename T, T min, T max >
-class UNIQUE_API_ IdProvider
+class IdProvider
 {
     // ──────── DEFAULTS ──────────
 public:
@@ -335,6 +327,6 @@ void IdProvider<T, min, max>::clear()
     _takenIdCounter = 0;
 }
 
-UNIQUE_NAMESPACE_END
+}
 
-#endif // __UNIQUE_ID_PROVIDER_HPP__
+#endif

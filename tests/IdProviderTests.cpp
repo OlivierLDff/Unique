@@ -6,7 +6,7 @@
 // Unique
 #include <Unique/IdProvider.hpp>
 
-UNIQUE_USING_NAMESPACE;
+using namespace Unique;
 
 class UniqueIdProviderTests : public ::testing::Test
 {

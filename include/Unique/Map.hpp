@@ -1,43 +1,28 @@
-#ifndef __UNIQUE_COMMON_HPP__
-#define __UNIQUE_COMMON_HPP__
+#ifndef __UNIQUE_MAP_HPP__
+#define __UNIQUE_MAP_HPP__
 
 // ─────────────────────────────────────────────────────────────
 //                  INCLUDE
 // ─────────────────────────────────────────────────────────────
 
-// C Header
-#include <cstdint>
-
-// We need to undef this to keep compatibility with UNIX systems
-#undef major
-#undef minor
-
-// C++ Header
-
-// Dependencies Header
-
-// Application Header
-#include <Unique/Export.hpp>
+#include <Unique/TMap.hpp>
+#include <map>
 
 // ─────────────────────────────────────────────────────────────
 //                  DECLARATION
 // ─────────────────────────────────────────────────────────────
 
-UNIQUE_NAMESPACE_START
+namespace Unique {
 
-class UNIQUE_API_ Version
+// ─────────────────────────────────────────────────────────────
+//                  CLASS
+// ─────────────────────────────────────────────────────────────
+
+template <class Key1, class Key2>
+class Map : public TMap<std::map, std::map, Key1, Key2>
 {
-    // ──────── CONSTRUCTOR ────────────────
-
-    // ──────── ATTRIBUTES ────────────────
-public:
-    static uint32_t major();
-    static uint32_t minor();
-    static uint32_t patch();
-    static uint32_t tag();
-    static const char* readable();
 };
 
-UNIQUE_NAMESPACE_END
+}
 
 #endif

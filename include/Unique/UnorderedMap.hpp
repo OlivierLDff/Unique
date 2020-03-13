@@ -1,52 +1,32 @@
+#ifndef __UNIQUE_MAP_HPP__
+#define __UNIQUE_MAP_HPP__
+
 // ─────────────────────────────────────────────────────────────
 //                  INCLUDE
 // ─────────────────────────────────────────────────────────────
 
-// C Header
-
-// C++ Header
-
-// Dependencies Header
-
-// Application Header
-#include <Unique/Version.hpp>
+#include <Unique/TMap.hpp>
+#include <unordered_map>
 
 // ─────────────────────────────────────────────────────────────
 //                  DECLARATION
 // ─────────────────────────────────────────────────────────────
 
-UNIQUE_USING_NAMESPACE
+namespace Unique {
 
 // ─────────────────────────────────────────────────────────────
-//                  FUNCTIONS
+//                  CLASS
 // ─────────────────────────────────────────────────────────────
-//
-#define xstr(s) str(s)
-#define str(s) #s
 
-constexpr auto READABLE = xstr(UNIQUE_VERSION_MAJOR) "." xstr(UNIQUE_VERSION_MINOR) "." xstr(UNIQUE_VERSION_PATCH) "." xstr(UNIQUE_VERSION_TAG_HEX);
-
-uint32_t Version::major()
+template <class Key1, class Key2>
+class UnorderedMap : public TMap<std::unordered_map, std::unordered_map, Key1, Key2>
 {
-    return UNIQUE_VERSION_MAJOR;
+    private:
+        using super = T;
+    public:
+        using super::super;
+};
+
 }
 
-uint32_t Version::minor()
-{
-    return UNIQUE_VERSION_MINOR;
-}
-
-uint32_t Version::patch()
-{
-    return UNIQUE_VERSION_PATCH;
-}
-
-uint32_t Version::tag()
-{
-    return UNIQUE_VERSION_TAG_HEX;
-}
-
-const char* Version::readable()
-{
-    return READABLE;
-}
+#endif
