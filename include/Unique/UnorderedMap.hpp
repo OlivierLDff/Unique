@@ -21,10 +21,6 @@ namespace Unique {
 template <class Key1, class Key2>
 class UnorderedMap : public TMap<std::unordered_map, std::unordered_map, Key1, Key2>
 {
-    private:
-        using super = T;
-    public:
-        using super::super;
 };
 
 }
