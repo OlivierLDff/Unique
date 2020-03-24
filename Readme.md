@@ -113,11 +113,7 @@ ctest -C Release
 
 - **UNIQUE_TARGET** : Library target name. *Default : "Unique"*
 - **UNIQUE_PROJECT** : Project name. *Default : "Unique"*
-- **UNIQUE_BUILD_SHARED** : Build shared library [ON OFF]. *Default: OFF*.
-- **UNIQUE_BUILD_STATIC** : Build static library [ON OFF]. *Default: ON*.
-- **UNIQUE_USE_NAMESPACE** : Should the library be compiled with a namespace. *Default: ON*.
-- **UNIQUE_NAMESPACE** : Namespace of the library is UNIQUE_USE_NAMESPACE is ON. *Default : Unique.*
-- **UNIQUE_BUILD_TEST** : Build Unique Test executable [ON OFF]. *Default: OFF*.
+- **UNIQUE_ENABLE_TESTS** : Build Unique Test executable [ON OFF]. *Default: OFF*.
 
 ## Authors
 
