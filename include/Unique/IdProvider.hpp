@@ -6,6 +6,7 @@
 // ─────────────────────────────────────────────────────────────
 
 #include <cassert>
+#include <cstddef>
 #include <set>
 
 // ─────────────────────────────────────────────────────────────
@@ -26,6 +27,8 @@ public:
     const T MIN = min;
     const T MAX = max;
 
+    using Type = T;
+
     // Static assert if we are using c++17
 #if __cplusplus > 201703L
     static_assert(min < max);
@@ -38,7 +41,7 @@ private:
     T _idCounter = min;
     /** Available ids before idCounter */
     std::set<T> _availableIds;
-    size_t _takenIdCounter = 0;
+    std::size_t _takenIdCounter = 0;
 
 private:
     /** Recursively erase available ids in the available list. Recursion happen inside a while loop to avoid stack overflow */
@@ -98,7 +101,7 @@ public:
      * \brief Count of available id before _idCounter
      * \return Size of _availableIds. This function is mainly tests
      */
-    size_t countOfAvailableIds() const;
+    std::size_t countOfAvailableIds() const;
 
     /**
      * \brief Get if _availableIds is empty
@@ -113,7 +116,7 @@ public:
     bool areIdsAvailables() const;
 
     /** Get the count of taken ids */
-    size_t countOfTakenIds() const;
+    std::size_t countOfTakenIds() const;
 
     /**
      * \brief Clear the counter and reset everything to initialization
@@ -295,7 +298,7 @@ bool IdProvider<T, min, max>::isIdTaken(const T id) const
 }
 
 template <typename T, T min, T max>
-size_t IdProvider<T, min, max>::countOfAvailableIds() const
+std::size_t IdProvider<T, min, max>::countOfAvailableIds() const
 {
     return _availableIds.size();
 }
@@ -313,7 +316,7 @@ bool IdProvider<T, min, max>::areIdsAvailables() const
 }
 
 template <typename T, T min, T max>
-size_t IdProvider<T, min, max>::countOfTakenIds() const
+std::size_t IdProvider<T, min, max>::countOfTakenIds() const
 {
     return _takenIdCounter;
 }
