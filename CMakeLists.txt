@@ -41,7 +41,7 @@ set(UNIQUE_VERSION ${UNIQUE_VERSION_MAJOR}.${UNIQUE_VERSION_MINOR}.${UNIQUE_VERS
 set(UNIQUE_FOLDER_PREFIX ${UNIQUE_PROJECT} CACHE STRING "Prefix folder for all Unique generated targets in generated project (only decorative)")
 
 # Tests
-set(UNIQUE_ENABLE_TESTS ON CACHE BOOL "Create or not a target for test (compatible with CTests)")
+set(UNIQUE_ENABLE_TESTS OFF CACHE BOOL "Create or not a target for test (compatible with CTests)")
 set(UNIQUE_TESTS_PREFIX ${UNIQUE_PROJECT} CACHE STRING "Prefix for all Unique tests")
 
 # CREATE PROJECT
