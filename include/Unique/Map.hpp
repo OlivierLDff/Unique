@@ -18,7 +18,7 @@ namespace unique {
 //                  CLASS
 // ─────────────────────────────────────────────────────────────
 
-template <class Key1, class Key2>
+template<class Key1, class Key2>
 class Map : public TMap<std::map, std::map, Key1, Key2>
 {
 };

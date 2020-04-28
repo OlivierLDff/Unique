@@ -5,8 +5,8 @@
 //                  INCLUDE
 // ─────────────────────────────────────────────────────────────
 
-#include <cstddef> // std::size_t
-#include <utility> // std::pair
+#include <cstddef>  // std::size_t
+#include <utility>  // std::pair
 
 // ─────────────────────────────────────────────────────────────
 //                  DECLARATION
@@ -21,9 +21,8 @@ namespace unique {
 /**
  * Container that contains two maps for fast lookup with any key to the other
  */
-template <template<class, class, class ...> class Map1,
-          template<class, class, class ...> class Map2,
-          typename Key1, typename Key2>
+template<template<class, class, class...> class Map1, template<class, class, class...> class Map2,
+    typename Key1, typename Key2>
 class TMap
 {
 public:
@@ -41,8 +40,10 @@ public:
 
     using Key1Type = typename Key1Map::key_type;
     using Key2Type = typename Key2Map::key_type;
+
 public:
     virtual ~TMap() = default;
+
 private:
     Key1Map _key1Map {};
     Key2Map _key2Map {};
@@ -205,28 +206,30 @@ public:
 
 private:
     template<typename KeyMap, typename KeyOtherMap>
-    static std::pair<typename KeyMap::iterator, bool> T_insert(typename KeyMap::value_type value, KeyMap& keyMap, KeyOtherMap& keyOtherMap)
+    static std::pair<typename KeyMap::iterator, bool> T_insert(
+        typename KeyMap::value_type value, KeyMap& keyMap, KeyOtherMap& keyOtherMap)
     {
         // ) Check that the second key isn't already present in other map
         const auto keyOtherIt = keyOtherMap.find(value.second);
-        if (keyOtherIt != keyOtherMap.end())
+        if(keyOtherIt != keyOtherMap.end())
             return std::make_pair(keyMap.find(keyOtherIt->second), false);
 
         // ) Insert in both map, only insert in other map if first map insert succeed
         const auto res = keyMap.insert(value);
-        if (res.second)
-            keyOtherMap.insert({ value.second, value.first });
+        if(res.second)
+            keyOtherMap.insert({value.second, value.first});
 
         // ) Return the res
         return res;
     }
 
     template<typename KeyMap, typename KeyOtherMap>
-    static typename KeyMap::iterator T_insert(typename KeyMap::const_iterator hint, typename KeyMap::value_type value, KeyMap& keyMap, KeyOtherMap& keyOtherMap)
+    static typename KeyMap::iterator T_insert(typename KeyMap::const_iterator hint,
+        typename KeyMap::value_type value, KeyMap& keyMap, KeyOtherMap& keyOtherMap)
     {
         // ) Check that the second key isn't already present in other map
         const auto keyOtherIt = keyOtherMap.find(value.second);
-        if (keyOtherIt != keyOtherMap.end())
+        if(keyOtherIt != keyOtherMap.end())
             return keyMap.find(keyOtherIt->second);
 
         // ) We need to check if there not already an element, in order not to insert in the second map if the first insert succeed
@@ -234,8 +237,8 @@ private:
         if(res == keyMap.end())
         {
             res = keyMap.insert(hint, value);
-            if (res != keyMap.end())
-                keyOtherMap.insert({ value.second, value.first });
+            if(res != keyMap.end())
+                keyOtherMap.insert({value.second, value.first});
         }
 
         // ) Return the res
@@ -248,14 +251,20 @@ public:
      * \param value element value to insert
      * \return Returns a pair consisting of an iterator to the inserted element (or to the element that prevented the insertion) and a bool denoting whether the insertion took place.
      */
-    std::pair<Key1Iterator, bool> insert(Key1ValueType&& value) { return T_insert(value, _key1Map, _key2Map); }
+    std::pair<Key1Iterator, bool> insert(Key1ValueType&& value)
+    {
+        return T_insert(value, _key1Map, _key2Map);
+    }
 
     /**
      * \brief Inserts value.
      * \param value element value to insert
      * \return Returns a pair consisting of an iterator to the inserted element (or to the element that prevented the insertion) and a bool denoting whether the insertion took place.
      */
-    std::pair<Key1Iterator, bool> insert(const Key1ValueType& value) { return T_insert(value, _key1Map, _key2Map); }
+    std::pair<Key1Iterator, bool> insert(const Key1ValueType& value)
+    {
+        return T_insert(value, _key1Map, _key2Map);
+    }
 
     /**
      * \brief Inserts value, using hint as a non-binding suggestion to where the search should start.
@@ -263,7 +272,10 @@ public:
      * \param value element value to insert
      * \return Returns an iterator to the inserted element, or to the element that prevented the insertion.
      */
-    Key1Iterator insert(Key1ConstIterator hint, const Key1ValueType& value) { return T_insert(hint, value, _key1Map, _key2Map); }
+    Key1Iterator insert(Key1ConstIterator hint, const Key1ValueType& value)
+    {
+        return T_insert(hint, value, _key1Map, _key2Map);
+    }
 
     /**
      * \brief Inserts value, using hint as a non-binding suggestion to where the search should start.
@@ -271,7 +283,10 @@ public:
      * \param value element value to insert
      * \return Returns an iterator to the inserted element, or to the element that prevented the insertion.
      */
-    Key1Iterator insert(Key1ConstIterator hint, Key1ValueType&& value) { return T_insert(hint, value, _key1Map, _key2Map); }
+    Key1Iterator insert(Key1ConstIterator hint, Key1ValueType&& value)
+    {
+        return T_insert(hint, value, _key1Map, _key2Map);
+    }
 
 public:
     /**
@@ -279,14 +294,20 @@ public:
      * \param value element value to insert
      * \return Returns a pair consisting of an iterator to the inserted element (or to the element that prevented the insertion) and a bool denoting whether the insertion took place.
      */
-    std::pair<Key2Iterator, bool> insert(Key2ValueType&& value) { return T_insert(value, _key2Map, _key1Map); }
+    std::pair<Key2Iterator, bool> insert(Key2ValueType&& value)
+    {
+        return T_insert(value, _key2Map, _key1Map);
+    }
 
     /**
      * \brief Inserts value.
      * \param value element value to insert
      * \return Returns a pair consisting of an iterator to the inserted element (or to the element that prevented the insertion) and a bool denoting whether the insertion took place.
      */
-    std::pair<Key2Iterator, bool> insert(const Key2ValueType& value) { return T_insert(value, _key2Map, _key1Map); }
+    std::pair<Key2Iterator, bool> insert(const Key2ValueType& value)
+    {
+        return T_insert(value, _key2Map, _key1Map);
+    }
 
     /**
      * \brief Inserts value, using hint as a non-binding suggestion to where the search should start.
@@ -294,7 +315,10 @@ public:
      * \param value element value to insert
      * \return Returns an iterator to the inserted element, or to the element that prevented the insertion.
      */
-    Key2Iterator insert(Key2ConstIterator hint, const Key2ValueType& value) { return T_insert(hint, value, _key2Map, _key1Map); }
+    Key2Iterator insert(Key2ConstIterator hint, const Key2ValueType& value)
+    {
+        return T_insert(hint, value, _key2Map, _key1Map);
+    }
 
     /**
      * \brief Inserts value, using hint as a non-binding suggestion to where the search should start.
@@ -302,11 +326,15 @@ public:
      * \param value element value to insert
      * \return Returns an iterator to the inserted element, or to the element that prevented the insertion.
      */
-    Key2Iterator insert(Key2ConstIterator hint, Key2ValueType&& value) { return T_insert(hint, value, _key2Map, _key1Map); }
+    Key2Iterator insert(Key2ConstIterator hint, Key2ValueType&& value)
+    {
+        return T_insert(hint, value, _key2Map, _key1Map);
+    }
 
 private:
     template<typename KeyMap, typename KeyOtherMap>
-    static typename KeyMap::iterator T_erase(typename KeyMap::const_iterator pos, KeyMap& keyMap, KeyOtherMap& keyOtherMap)
+    static typename KeyMap::iterator T_erase(
+        typename KeyMap::const_iterator pos, KeyMap& keyMap, KeyOtherMap& keyOtherMap)
     {
         if(pos != keyMap.end())
         {
@@ -316,7 +344,8 @@ private:
         return keyMap.end();
     }
     template<typename KeyMap, typename KeyOtherMap>
-    std::size_t T_erase(const typename KeyMap::key_type& key, KeyMap& keyMap, KeyOtherMap& keyOtherMap)
+    std::size_t T_erase(
+        const typename KeyMap::key_type& key, KeyMap& keyMap, KeyOtherMap& keyOtherMap)
     {
         const auto it = keyMap.find(key);
         if(it != keyMap.end())
@@ -366,27 +395,27 @@ private:
 
         // ) If the current other key is the same as the new one we want to move to, then we don't need to do anything
         const auto currentOtherKey = it->second;
-        if (newKey == currentOtherKey)
+        if(newKey == currentOtherKey)
             return true;
 
         // ) The current other iterator, the one we need to erase and reinsert
         const auto currentOtherIt = keyOtherMap.find(currentOtherKey);
 
         // ) Check that key is present
-        if (it == keyMap.end())
+        if(it == keyMap.end())
             return false;
-        if (currentOtherIt == keyOtherMap.end())
+        if(currentOtherIt == keyOtherMap.end())
             return false;
 
         // ) Check that the new key is available in the container
         const auto newOtherIt = keyOtherMap.find(newKey);
-        if (newOtherIt != keyOtherMap.end())
+        if(newOtherIt != keyOtherMap.end())
             return false;
 
         // ) For keyMap we just new to change second member but for other key, the map key change so we need to erase and insert
         it->second = newKey;
         keyOtherMap.erase(currentOtherIt);
-        keyOtherMap.insert({ newKey, key });
+        keyOtherMap.insert({newKey, key});
 
         return true;
     }
@@ -397,13 +426,13 @@ private:
         const auto currentIt = keyMap.find(currentKey);
 
         // ) Function fail if key isn't present
-        if (currentIt == keyMap.end())
+        if(currentIt == keyMap.end())
             return false;
 
         const auto newIt = keyMap.find(newKey);
 
         // ) Function fail if there is already something at the new id
-        if (newIt != keyMap.end())
+        if(newIt != keyMap.end())
             return false;
 
         const auto otherCurrentKey = currentIt->second;
@@ -412,7 +441,7 @@ private:
 
         currentOtherIt->second = newKey;
         keyMap.erase(currentIt);
-        keyMap.insert({ newKey, otherCurrentKey });
+        keyMap.insert({newKey, otherCurrentKey});
 
         return true;
     }
@@ -426,7 +455,10 @@ public:
      * false if there is already a key associated with newKey
      * false if key2 isn't present
      */
-    bool move(const Key2& key2, const Key1& newKey) { return T_move(key2, newKey, _key2Map, _key1Map); }
+    bool move(const Key2& key2, const Key1& newKey)
+    {
+        return T_move(key2, newKey, _key2Map, _key1Map);
+    }
 
     /**
      * \brief move key2 at newKey
@@ -436,7 +468,10 @@ public:
      * false if there is already a key associated with newKey
      * false if key1 isn't present
      */
-    bool move(const Key1& key1, const Key2& newKey) { return T_move(key1, newKey, _key1Map, _key2Map); }
+    bool move(const Key1& key1, const Key2& newKey)
+    {
+        return T_move(key1, newKey, _key1Map, _key2Map);
+    }
 
     /**
      * \brief Change the key from currentKey to newKey
@@ -446,7 +481,10 @@ public:
      * false if currentKey doesn't exist
      * false if newKey is already taken
      */
-    bool move(const Key1& currentKey, const Key1& newKey) { return T_move(currentKey, newKey, _key1Map, _key2Map); }
+    bool move(const Key1& currentKey, const Key1& newKey)
+    {
+        return T_move(currentKey, newKey, _key1Map, _key2Map);
+    }
 
     /**
      * \brief Change the key from currentKey to newKey
@@ -456,7 +494,10 @@ public:
      * false if currentKey doesn't exist
      * false if newKey is already taken
      */
-    bool move(const Key2& currentKey, const Key2& newKey) { return T_move(currentKey, newKey, _key2Map, _key1Map); }
+    bool move(const Key2& currentKey, const Key2& newKey)
+    {
+        return T_move(currentKey, newKey, _key2Map, _key1Map);
+    }
 
 private:
     template<typename Key, typename KeyMap, typename KeyOtherMap>
@@ -481,8 +522,14 @@ private:
     }
 
 public:
-    bool swap(const Key1& key, const Key1& otherKey) { return T_swap(key, otherKey, _key1Map, _key2Map); }
-    bool swap(const Key2& key, const Key2& otherKey) { return T_swap(key, otherKey, _key2Map, _key1Map); }
+    bool swap(const Key1& key, const Key1& otherKey)
+    {
+        return T_swap(key, otherKey, _key1Map, _key2Map);
+    }
+    bool swap(const Key2& key, const Key2& otherKey)
+    {
+        return T_swap(key, otherKey, _key2Map, _key1Map);
+    }
 
     // ──────── LOOKUP ──────────
 
@@ -513,6 +560,7 @@ public:
      * \return Iterator to an element with key equivalent to key. If no such element is found, past-the-end (see end()) iterator is returned.
      */
     Key1ConstIterator find(const Key1& key) const { return T_find(key, _key1Map); }
+
 public:
     /**
      * \brief Finds an element with key equivalent to key.

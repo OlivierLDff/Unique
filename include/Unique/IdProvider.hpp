@@ -19,7 +19,7 @@ namespace unique {
 //                  CLASS
 // ─────────────────────────────────────────────────────────────
 
-template <typename T, T min, T max >
+template<typename T, T min, T max>
 class IdProvider
 {
     // ──────── DEFAULTS ──────────
@@ -29,10 +29,7 @@ public:
 
     using Type = T;
 
-    // Static assert if we are using c++17
-#if __cplusplus > 201703L
-    static_assert(min < max);
-#endif
+    static_assert(min < max, "min should be less than max");
 
     static constexpr void assert_id(const T id);
 
@@ -125,39 +122,37 @@ public:
     void clear();
 };
 
-template <typename T, T min, T max>
+template<typename T, T min, T max>
 constexpr void IdProvider<T, min, max>::assert_id(const T id)
 {
     assert(id >= min);
     assert(id < max);
 }
 
-template <typename T, T min, T max>
+template<typename T, T min, T max>
 void IdProvider<T, min, max>::eraseAvailableId(typename std::set<T>::iterator it)
 {
     assert_id(it != _availableIds.end());
-    do
-    {
+    do {
         const auto id = *it;
         assert_id(id);
 
         _availableIds.erase(it);
 
-        if ((_idCounter > MIN) && (id == _idCounter - 1))
+        if((_idCounter > MIN) && (id == _idCounter - 1))
         {
             --_idCounter;
-            if ((_idCounter > MIN))
+            if((_idCounter > MIN))
                 it = _availableIds.find(_idCounter - 1);
             else
                 break;
         }
         else
             break;
-    }
-    while (it != _availableIds.end());
+    } while(it != _availableIds.end());
 }
 
-template <typename T, T min, T max>
+template<typename T, T min, T max>
 bool IdProvider<T, min, max>::takeId(const T id)
 {
     // ) Always assert the id to find bugs asap in debug
@@ -165,7 +160,7 @@ bool IdProvider<T, min, max>::takeId(const T id)
     assert_id(_idCounter);
 
     // ) If we want to take _idCounter we can return it
-    if (id == _idCounter)
+    if(id == _idCounter)
     {
         // ) We simply increment it for next takeNextId to work
         ++_idCounter;
@@ -177,9 +172,9 @@ bool IdProvider<T, min, max>::takeId(const T id)
     }
 
     // ) We want a value that is upper to id Counter, we insert a range from _idCounter to (id-1)
-    if (id > _idCounter)
+    if(id > _idCounter)
     {
-        for (auto i = _idCounter; i < id; ++i)
+        for(auto i = _idCounter; i < id; ++i)
         {
             // ) Value that are > _idCounter should never be inside _availableIds
             assert(_availableIds.find(i) == _availableIds.end());
@@ -196,7 +191,7 @@ bool IdProvider<T, min, max>::takeId(const T id)
     // ) We need to look if id is available in _availableIds
     const auto it = _availableIds.find(id);
     // )
-    if (it == _availableIds.end())
+    if(it == _availableIds.end())
         return false;
 
     eraseAvailableId(it);
@@ -206,11 +201,11 @@ bool IdProvider<T, min, max>::takeId(const T id)
     return true;
 }
 
-template <typename T, T min, T max>
+template<typename T, T min, T max>
 T IdProvider<T, min, max>::takeNextId()
 {
     // ) If no ids are available to consume then we increment the counter
-    if (_availableIds.empty())
+    if(_availableIds.empty())
     {
         // ) We can't have idCounter >= the maxId. Because it mean we reached maximum memory available, we need to assert
         assert(_idCounter < MAX);
@@ -231,20 +226,20 @@ T IdProvider<T, min, max>::takeNextId()
     return id;
 }
 
-template <typename T, T min, T max>
+template<typename T, T min, T max>
 T IdProvider<T, min, max>::getFirstIdAvailable() const
 {
     return countOfAvailableIds() ? *_availableIds.begin() : 0;
 }
 
-template <typename T, T min, T max>
+template<typename T, T min, T max>
 T IdProvider<T, min, max>::getNextId() const
 {
     const auto firstAvailableId = getFirstIdAvailable();
     return firstAvailableId ? firstAvailableId : _idCounter;
 }
 
-template <typename T, T min, T max>
+template<typename T, T min, T max>
 void IdProvider<T, min, max>::releaseId(const T id)
 {
     // ) Always assert the id to find bugs asap in debug
@@ -259,14 +254,14 @@ void IdProvider<T, min, max>::releaseId(const T id)
     // ie the id to release is the one got with getAvailableIdAndIncrement last call
     // Then we simply decrement our counter
     // ) Otherwise we keep track in our available id set
-    if ((_idCounter > MIN) && _idCounter - 1 == id)
+    if((_idCounter > MIN) && _idCounter - 1 == id)
     {
         // ) We need to look if id is available in _availableIds
         --_idCounter;
-        if ((_idCounter > MIN))
+        if((_idCounter > MIN))
         {
             const auto it = _availableIds.find(_idCounter - 1);
-            if (it != _availableIds.end())
+            if(it != _availableIds.end())
                 eraseAvailableId(it);
         }
     }
@@ -282,7 +277,7 @@ void IdProvider<T, min, max>::releaseId(const T id)
     --_takenIdCounter;
 }
 
-template <typename T, T min, T max>
+template<typename T, T min, T max>
 bool IdProvider<T, min, max>::isIdAvailable(const T id) const
 {
     // ) Always assert the id to find bugs asap in debug
@@ -291,37 +286,37 @@ bool IdProvider<T, min, max>::isIdAvailable(const T id) const
     return id >= _idCounter || _availableIds.find(id) != _availableIds.end();
 }
 
-template <typename T, T min, T max>
+template<typename T, T min, T max>
 bool IdProvider<T, min, max>::isIdTaken(const T id) const
 {
     return !isIdAvailable(id);
 }
 
-template <typename T, T min, T max>
+template<typename T, T min, T max>
 std::size_t IdProvider<T, min, max>::countOfAvailableIds() const
 {
     return _availableIds.size();
 }
 
-template <typename T, T min, T max>
+template<typename T, T min, T max>
 bool IdProvider<T, min, max>::availableIdsEmpty() const
 {
-    return  _availableIds.empty();
+    return _availableIds.empty();
 }
 
-template <typename T, T min, T max>
+template<typename T, T min, T max>
 bool IdProvider<T, min, max>::areIdsAvailables() const
 {
     return !availableIdsEmpty() || (_idCounter < MAX);
 }
 
-template <typename T, T min, T max>
+template<typename T, T min, T max>
 std::size_t IdProvider<T, min, max>::countOfTakenIds() const
 {
     return _takenIdCounter;
 }
 
-template <typename T, T min, T max>
+template<typename T, T min, T max>
 void IdProvider<T, min, max>::clear()
 {
     // ) Clear the idCounter and the available id array
