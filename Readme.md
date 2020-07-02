@@ -1,5 +1,7 @@
 # Unique
 
+[![](https://github.com/OlivierLDff/Unique/workflows/CI/badge.svg)](https://github.com/OlivierLDff/Unique/actions?query=workflow%3ACI)
+
 Unique library provide helper class to create unique stuff.
 
 ## IdProvider

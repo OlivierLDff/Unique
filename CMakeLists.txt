@@ -8,7 +8,7 @@
 # │                       CMAKE PROPERTIES                           │
 # └──────────────────────────────────────────────────────────────────┘
 
-cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 # ┌──────────────────────────────────────────────────────────────────┐
 # │                       PROJECT SETTINGS                           │
@@ -18,7 +18,7 @@ cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
 set(UNIQUE_VERSION_MAJOR 1)
 set(UNIQUE_VERSION_MINOR 1)
-set(UNIQUE_VERSION_PATCH 0)
+set(UNIQUE_VERSION_PATCH 1)
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
     EXECUTE_PROCESS(
         COMMAND git rev-parse --short HEAD
@@ -67,7 +67,7 @@ endif() # UNIQUE_ENABLE_TESTS
 message(STATUS "---------------- DONE WITH OPTIONS. -----------------")
 
 # ┌──────────────────────────────────────────────────────────────────┐
-# │                          UNIQUE                              │
+# │                            UNIQUE                                │
 # └──────────────────────────────────────────────────────────────────┘
 
 set(UNIQUE_INCS_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -107,5 +107,7 @@ target_include_directories(${UNIQUE_TARGET} INTERFACE ${UNIQUE_INCS_FOLDER})
 # └──────────────────────────────────────────────────────────────────┘
 
 if(UNIQUE_ENABLE_TESTS)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/CTestLists.txt)
+    enable_testing()
+    include(cmake/FetchGTest.cmake)
+    add_subdirectory(tests)
 endif() # UNIQUE_ENABLE_TESTS
