@@ -73,6 +73,11 @@ public:
     T getNextId() const;
 
     /**
+     * \brief get the _idCounter even if some ids are available with getFirstIdAvailable()
+     */
+    T getNextEndId() const;
+
+    /**
      * \brief Release an id to make it available to takeNextId again.
      * The function assert if id isn't bound correctly or if value already have been released
      * This behavior help to track bugs or misbehavior during dev
@@ -237,6 +242,12 @@ T IdProvider<T, min, max>::getNextId() const
 {
     const auto firstAvailableId = getFirstIdAvailable();
     return firstAvailableId ? firstAvailableId : _idCounter;
+}
+
+template<typename T, T min, T max>
+T IdProvider<T, min, max>::getNextEndId() const
+{
+    return _idCounter;
 }
 
 template<typename T, T min, T max>
