@@ -10,6 +10,28 @@
 
 cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
+# ──── Include guards ────
+
+if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
+  message(FATAL_ERROR "In-source builds not allowed. " "Please make a new directory (called a build directory) and run CMake from there.")
+endif()
+
+# ──── Main Project behavior ────
+
+set(UNIQUE_MAIN_PROJECT OFF)
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+  set(UNIQUE_MAIN_PROJECT ON)
+endif()
+
+# ──── Default build to Release ────
+
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE
+      "Release"
+      CACHE STRING "Choose Release or Debug" FORCE
+  )
+endif()
+
 # ┌──────────────────────────────────────────────────────────────────┐
 # │                       PROJECT SETTINGS                           │
 # └──────────────────────────────────────────────────────────────────┘
@@ -17,8 +39,8 @@ cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 # OPTIONS
 
 set(UNIQUE_VERSION_MAJOR 1)
-set(UNIQUE_VERSION_MINOR 1)
-set(UNIQUE_VERSION_PATCH 1)
+set(UNIQUE_VERSION_MINOR 0)
+set(UNIQUE_VERSION_PATCH 2)
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
     EXECUTE_PROCESS(
         COMMAND git rev-parse --short HEAD
@@ -44,27 +66,31 @@ set(UNIQUE_FOLDER_PREFIX ${UNIQUE_PROJECT} CACHE STRING "Prefix folder for all U
 set(UNIQUE_ENABLE_TESTS OFF CACHE BOOL "Create or not a target for test (compatible with CTests)")
 set(UNIQUE_TESTS_PREFIX ${UNIQUE_PROJECT} CACHE STRING "Prefix for all Unique tests")
 
+set(UNIQUE_VERBOSE ${UNIQUE_MAIN_PROJECT} CACHE STRING "CMake Config Log")
+
 # CREATE PROJECT
 
 project(${UNIQUE_PROJECT} VERSION ${UNIQUE_VERSION} LANGUAGES C CXX)
 
-# LOG OPTIONS
+if(UNIQUE_VERBOSE)
 
-message(STATUS "---------------- UNIQUE OPTIONS. ----------------")
+    message(STATUS "---------------- UNIQUE OPTIONS. ----------------")
 
-#General
-message(STATUS "UNIQUE_PROJECT            : " ${UNIQUE_PROJECT})
-message(STATUS "UNIQUE_TARGET             : " ${UNIQUE_TARGET})
-message(STATUS "UNIQUE_VERSION            : " ${UNIQUE_VERSION})
-message(STATUS "UNIQUE_VERSION_TAG        : " ${UNIQUE_VERSION_TAG})
+    #General
+    message(STATUS "UNIQUE_PROJECT            : " ${UNIQUE_PROJECT})
+    message(STATUS "UNIQUE_TARGET             : " ${UNIQUE_TARGET})
+    message(STATUS "UNIQUE_VERSION            : " ${UNIQUE_VERSION})
+    message(STATUS "UNIQUE_VERSION_TAG        : " ${UNIQUE_VERSION_TAG})
 
-# Tests
-message(STATUS "UNIQUE_ENABLE_TESTS       : " ${UNIQUE_ENABLE_TESTS})
-if(UNIQUE_ENABLE_TESTS)
-message(STATUS "UNIQUE_TESTS_PREFIX       : " ${UNIQUE_TESTS_PREFIX})
-endif() # UNIQUE_ENABLE_TESTS
+    # Tests
+    message(STATUS "UNIQUE_ENABLE_TESTS       : " ${UNIQUE_ENABLE_TESTS})
+    if(UNIQUE_ENABLE_TESTS)
+    message(STATUS "UNIQUE_TESTS_PREFIX       : " ${UNIQUE_TESTS_PREFIX})
+    endif() # UNIQUE_ENABLE_TESTS
 
-message(STATUS "---------------- DONE WITH OPTIONS. -----------------")
+    message(STATUS "---------------- DONE WITH OPTIONS. -----------------")
+
+endif()
 
 # ┌──────────────────────────────────────────────────────────────────┐
 # │                            UNIQUE                                │
@@ -94,6 +120,7 @@ source_group("Api" FILES ${UNIQUE_API_INCS})
 
 # UNIQUE TARGET
 add_library(${UNIQUE_TARGET} INTERFACE)
+add_library(${UNIQUE_TARGET}::${UNIQUE_TARGET} ALIAS ${UNIQUE_TARGET})
 target_compile_features(${UNIQUE_TARGET} INTERFACE cxx_std_14)
 
 foreach(SRC_FILE ${UNIQUE_INCS})
